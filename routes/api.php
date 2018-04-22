@@ -19,3 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('tests/pageall', 'TestController@pageall');
 Route::resource('tests', 'TestController');
+
+Route::resource('users', 'UserController');
+
+Route::get('wx-user', 'WeappLoginController@user');

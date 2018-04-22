@@ -7,79 +7,99 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public $user_fillable = [
+        'nickName',// 姓名
+        'gender',// 性别
+        'birthday',// 生日
+        'zodiac',// 星座
+        'email',
+        'tel',
+        'university',// 所在学校
+        'major',// 所学专业
+        'characters',// 性格特点
+        'books',// 我喜欢的书籍
+        'movies',// 我喜欢的电影
+        'tastes',// 兴趣爱好
+        'motto',// 座右铭
+        'goal',// 人生目标
+        'avaterUrl',// 自画像可访问的链接
+    ];
+
     /**
+     * 获取所有的test
+     * @example GET http://localhost:8000/api/users
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $ret = User::all();
+        return $this->success($ret->toArray(),['total'=>$ret->count()]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * 获取指定id的error codes
+     * @example GET http://localhost:8000/api/users/1
      *
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return mixed
      */
-    public function create()
+    public function show($id)
     {
-        //
+        $ret =  User::findOrFail($id);
+        return $this->success($ret->toArray());
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 创建一条记录
+     * @example POST http://localhost:8000/api/users?Ftype=xx&Fname=xxx
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return mixed
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->only($this->user_fillable);
+
+        $ret = User::create($input);
+        if(empty($ret)){
+            return $this->fail($ret);
+        }else{
+            return $this->success();
+        }
     }
 
     /**
-     * Display the specified resource.
+     * 删除指定记录
+     * @example DELETE http://localhost:8000/api/users/1
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return int
      */
-    public function show(User $user)
+    public function destroy($id)
     {
-        //
+        return User::destroy($id);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * 更新一条记录
+     * @example PUT http://localhost:8000/api/users/1?Ftype=xxx&Fname=xxx
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @param Request $request
      */
-    public function edit(User $user)
+    public function update($id, Request $request)
     {
-        //
-    }
+        $errCode = User::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
+        $input = $request->only($this->user_fillable);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
+        $ret = $errCode->update($input);
+        if($ret<0){
+            return $this->fail($ret);
+        }else{
+            return $this->success();
+        }
     }
 }
