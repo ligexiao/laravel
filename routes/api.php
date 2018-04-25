@@ -23,3 +23,5 @@ Route::resource('tests', 'TestController');
 Route::resource('users', 'UserController');
 
 Route::get('wx-user', 'WeappLoginController@user');
+
+Route::get('upload-file', 'FileController@uploadFile');
